@@ -4,6 +4,7 @@ import demo.backend.ManageInternship.model.entity.Admin;
 import demo.backend.ManageInternship.model.entity.Status;
 import demo.backend.ManageInternship.model.payload.request.userInfo.AdminRequest;
 import demo.backend.ManageInternship.model.payload.response.MessageResponse;
+import demo.backend.ManageInternship.model.payload.response.userInfo.AdminResponse;
 import demo.backend.ManageInternship.repository.AdminRepository;
 import demo.backend.ManageInternship.repository.StatusRepository;
 import demo.backend.ManageInternship.service.AdminService;
@@ -13,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -25,19 +24,14 @@ public class AdminServiceImpl implements AdminService {
     StatusRepository statusRepository;
     MessageResponse messageResponse = new MessageResponse();
     @Override
-    public ResponseEntity<List<Admin>> getAllAdminUsers() {
+    public ResponseEntity<AdminResponse> getAllAdminUsers(Integer userId,String userCode,String userName,String userLastName) {
         try{
-            Admin admin = new Admin();
-            admin.setUserId(2);
-            admin.setUserCode("A002");
-            admin.setUserName("ทด2");
-            admin.setUserLastname("สอบ2");
-            Status status = statusRepository.findById(1).orElseThrow(() -> new EntityNotFoundException("Status not found"));
-            admin.setStatusInfo(status);
-            adminRepository.save(admin);
-            return new ResponseEntity<>(null,HttpStatus.OK);
+            AdminResponse adminResponse = new AdminResponse();
+            adminResponse.setAdminList(adminRepository.getAdminList(userId,userCode,userName,userLastName));
+            return new ResponseEntity<>(adminResponse,HttpStatus.OK);
 
         }catch (Exception e){
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

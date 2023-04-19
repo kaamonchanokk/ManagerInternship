@@ -4,21 +4,13 @@
  */
 package demo.backend.ManageInternship.model.entity;
 
+import demo.backend.ManageInternship.model.bean.AdminList;
+import lombok.Data;
+
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,10 +18,34 @@ import javax.validation.constraints.Size;
  *
  * @author Kamonchanok
  */
+@Data
 @Entity
 @Table(name = "admin")
-@NamedQueries({
-    @NamedQuery(name = "Admin.findAll", query = "SELECT a FROM Admin a")})
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "Admin.getAdminList",
+                query = "SELECT a.USER_ID,a.USER_CODE,CONCAT(a.USER_NAME,' ',a.USER_LASTNAME) AS USER_NAME,s.STATUS_NAME AS STATUS_INFO FROM Admin a " +
+                        "INNER JOIN status s on a.STATUS_INFO = s.STATUS_ID AND s.STATUS_TYPE = 'STATUS_INFO ' " +
+                        "WHERE  (a.USER_ID = :userId OR :userId IS NULL) " +
+                        "AND  (a.USER_CODE = :userCode OR :userCode IS NULL)" +
+                        "AND (a.USER_NAME = :userName OR :userName IS NULL) " +
+                        "AND (a.USER_LASTNAME = :userLastName OR :userLastName IS NULL) ",
+                resultSetMapping = "AdminListMapping"
+        )
+})
+@SqlResultSetMappings({
+        @SqlResultSetMapping(name = "AdminListMapping", classes = {
+                @ConstructorResult(targetClass = AdminList.class,
+                        columns = {
+                                @ColumnResult(name = "USER_ID", type = Integer.class),
+                                @ColumnResult(name = "USER_CODE", type = String.class),
+                                @ColumnResult(name = "USER_NAME", type = String.class),
+                                @ColumnResult(name = "STATUS_INFO", type = String.class),
+                        }
+                )
+        })
+})
+
 public class Admin implements Serializable {
 
     private static final long serialVersionUID = 1L;
