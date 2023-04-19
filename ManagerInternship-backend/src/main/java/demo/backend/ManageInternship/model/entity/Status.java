@@ -35,12 +35,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Status.findAll", query = "SELECT s FROM Status s")})
 public class Status implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "STATUS_ID")
-    private Integer statusId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
@@ -61,17 +55,46 @@ public class Status implements Serializable {
     @Column(name = "CREATE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusInfo")
+    private List<Request> requestList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusApprove")
+    private List<Request> requestList1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusInfo")
+    private List<Schedule> scheduleList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusInfo")
+    private List<Teacher> teacherList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusStudent")
+    private List<Student> studentList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusInfo")
+    private List<Student> studentList1;
+    @OneToMany(mappedBy = "statusInfo")
+    private List<Year> yearList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusInfo")
+    private List<Company> companyList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusInfo")
+    private List<Department> departmentList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusInfo")
+    private List<Faculty> facultyList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusInfo")
+    private List<Position> positionList;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "STATUS_ID")
+    private Integer statusId;
     @Column(name = "UPDATE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusInfo")
-    private List<Admin> adminList;
-    @JoinColumn(name = "CREATE_BY", referencedColumnName = "USER_ID")
+    private List<Staff> staffList;
+    @JoinColumn(name = "CREATE_BY", referencedColumnName = "STAFF_ID")
     @ManyToOne(optional = false)
-    private Admin createBy;
-    @JoinColumn(name = "UPDATE_BY", referencedColumnName = "USER_ID")
+    private Staff createBy;
+    @JoinColumn(name = "UPDATE_BY", referencedColumnName = "STAFF_ID")
     @ManyToOne
-    private Admin updateBy;
+    private Staff updateBy;
 
     public Status() {
     }
@@ -136,27 +159,27 @@ public class Status implements Serializable {
         this.updateDate = updateDate;
     }
 
-    public List<Admin> getAdminList() {
-        return adminList;
+    public List<Staff> getStaffList() {
+        return staffList;
     }
 
-    public void setAdminList(List<Admin> adminList) {
-        this.adminList = adminList;
+    public void setStaffList(List<Staff> staffList) {
+        this.staffList = staffList;
     }
 
-    public Admin getCreateBy() {
+    public Staff getCreateBy() {
         return createBy;
     }
 
-    public void setCreateBy(Admin createBy) {
+    public void setCreateBy(Staff createBy) {
         this.createBy = createBy;
     }
 
-    public Admin getUpdateBy() {
+    public Staff getUpdateBy() {
         return updateBy;
     }
 
-    public void setUpdateBy(Admin updateBy) {
+    public void setUpdateBy(Staff updateBy) {
         this.updateBy = updateBy;
     }
 
@@ -183,6 +206,94 @@ public class Status implements Serializable {
     @Override
     public String toString() {
         return "demo.backend.ManageInternship.model.entity.Status[ statusId=" + statusId + " ]";
+    }
+
+    public List<Position> getPositionList() {
+        return positionList;
+    }
+
+    public void setPositionList(List<Position> positionList) {
+        this.positionList = positionList;
+    }
+
+    public List<Request> getRequestList() {
+        return requestList;
+    }
+
+    public void setRequestList(List<Request> requestList) {
+        this.requestList = requestList;
+    }
+
+    public List<Request> getRequestList1() {
+        return requestList1;
+    }
+
+    public void setRequestList1(List<Request> requestList1) {
+        this.requestList1 = requestList1;
+    }
+
+    public List<Schedule> getScheduleList() {
+        return scheduleList;
+    }
+
+    public void setScheduleList(List<Schedule> scheduleList) {
+        this.scheduleList = scheduleList;
+    }
+
+    public List<Teacher> getTeacherList() {
+        return teacherList;
+    }
+
+    public void setTeacherList(List<Teacher> teacherList) {
+        this.teacherList = teacherList;
+    }
+
+    public List<Student> getStudentList() {
+        return studentList;
+    }
+
+    public void setStudentList(List<Student> studentList) {
+        this.studentList = studentList;
+    }
+
+    public List<Student> getStudentList1() {
+        return studentList1;
+    }
+
+    public void setStudentList1(List<Student> studentList1) {
+        this.studentList1 = studentList1;
+    }
+
+    public List<Year> getYearList() {
+        return yearList;
+    }
+
+    public void setYearList(List<Year> yearList) {
+        this.yearList = yearList;
+    }
+
+    public List<Company> getCompanyList() {
+        return companyList;
+    }
+
+    public void setCompanyList(List<Company> companyList) {
+        this.companyList = companyList;
+    }
+
+    public List<Department> getDepartmentList() {
+        return departmentList;
+    }
+
+    public void setDepartmentList(List<Department> departmentList) {
+        this.departmentList = departmentList;
+    }
+
+    public List<Faculty> getFacultyList() {
+        return facultyList;
+    }
+
+    public void setFacultyList(List<Faculty> facultyList) {
+        this.facultyList = facultyList;
     }
     
 }
