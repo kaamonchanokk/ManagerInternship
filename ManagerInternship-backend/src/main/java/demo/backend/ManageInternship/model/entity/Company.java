@@ -4,24 +4,14 @@
  */
 package demo.backend.ManageInternship.model.entity;
 
+import demo.backend.ManageInternship.model.bean.CompanyData;
+import demo.backend.ManageInternship.model.bean.StaffList;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,10 +19,48 @@ import javax.validation.constraints.Size;
  *
  * @author Kamonchanok
  */
+@Data
 @Entity
 @Table(name = "company")
-@NamedQueries({
-    @NamedQuery(name = "Company.findAll", query = "SELECT c FROM Company c")})
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "Company.getCompanyList",
+                query = "SELECT c.COMPANY_ID" +
+                        ",c.COMPANY_NAME" +
+                        ",c.COMPANY_TELEPHONE " +
+                        ",c.COMPANY_ADDRESS " +
+                        ",s.STATUS_NAME " +
+                        ",c.CREATE_DATE " +
+                        ",CONCAT(st1.STAFF_TITLE,st1.STAFF_NAME,' ',st1.STAFF_LASTNAME) AS CREATE_BY " +
+                        ",c.UPDATE_DATE " +
+                        ",CONCAT(st2.STAFF_TITLE,st2.STAFF_NAME,' ',st2.STAFF_LASTNAME) AS UPDATE_BY " +
+                        "FROM company c " +
+                        "INNER JOIN status s on c.STATUS_INFO = s.STATUS_ID " +
+                        "INNER JOIN staff st1 on st1.STAFF_ID = c.CREATE_BY " +
+                        "LEFT JOIN staff st2 on st2.STAFF_ID = c.UPDATE_BY "+
+                        "WHERE  (c.COMPANY_NAME = :companyName OR :companyName IS NULL) "
+                ,
+                resultSetMapping = "CompanyListMapping"
+        )
+})
+@SqlResultSetMappings({
+        @SqlResultSetMapping(name = "CompanyListMapping", classes = {
+                @ConstructorResult(targetClass = CompanyData.class,
+                        columns = {
+                                @ColumnResult(name = "COMPANY_ID", type = Integer.class),
+                                @ColumnResult(name = "COMPANY_NAME", type = String.class),
+                                @ColumnResult(name = "COMPANY_TELEPHONE", type = String.class),
+                                @ColumnResult(name = "COMPANY_ADDRESS", type = String.class),
+                                @ColumnResult(name = "STATUS_NAME", type = String.class),
+                                @ColumnResult(name = "CREATE_DATE", type = Date.class),
+                                @ColumnResult(name = "CREATE_BY", type = String.class),
+                                @ColumnResult(name = "UPDATE_DATE", type = Date.class),
+                                @ColumnResult(name = "UPDATE_BY", type = String.class),
+
+                        }
+                )
+        })
+})
 public class Company implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -89,86 +117,6 @@ public class Company implements Serializable {
         this.companyTelephone = companyTelephone;
         this.companyAddress = companyAddress;
         this.createDate = createDate;
-    }
-
-    public Integer getCompanyId() {
-        return companyId;
-    }
-
-    public void setCompanyId(Integer companyId) {
-        this.companyId = companyId;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public String getCompanyTelephone() {
-        return companyTelephone;
-    }
-
-    public void setCompanyTelephone(String companyTelephone) {
-        this.companyTelephone = companyTelephone;
-    }
-
-    public String getCompanyAddress() {
-        return companyAddress;
-    }
-
-    public void setCompanyAddress(String companyAddress) {
-        this.companyAddress = companyAddress;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public List<Request> getRequestList() {
-        return requestList;
-    }
-
-    public void setRequestList(List<Request> requestList) {
-        this.requestList = requestList;
-    }
-
-    public Status getStatusInfo() {
-        return statusInfo;
-    }
-
-    public void setStatusInfo(Status statusInfo) {
-        this.statusInfo = statusInfo;
-    }
-
-    public Staff getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Staff createBy) {
-        this.createBy = createBy;
-    }
-
-    public Staff getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Staff updateBy) {
-        this.updateBy = updateBy;
     }
 
     @Override

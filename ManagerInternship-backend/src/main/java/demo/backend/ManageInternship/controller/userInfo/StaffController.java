@@ -3,7 +3,7 @@ package demo.backend.ManageInternship.controller.userInfo;
 import demo.backend.ManageInternship.model.payload.request.userInfo.StaffRequest;
 import demo.backend.ManageInternship.model.payload.response.MessageResponse;
 import demo.backend.ManageInternship.model.payload.response.userInfo.StaffResponse;
-import demo.backend.ManageInternship.service.StaffService;
+import demo.backend.ManageInternship.service.userInfo.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package demo.backend.ManageInternship.serviceImpl;
+package demo.backend.ManageInternship.serviceImpl.userInfo;
 
 import demo.backend.ManageInternship.model.entity.Staff;
 import demo.backend.ManageInternship.model.entity.Status;
@@ -8,10 +8,8 @@ import demo.backend.ManageInternship.model.payload.response.userInfo.StaffRespon
 import demo.backend.ManageInternship.repository.PositionRepository;
 import demo.backend.ManageInternship.repository.StaffRepository;
 import demo.backend.ManageInternship.repository.StatusRepository;
-import demo.backend.ManageInternship.service.StaffService;
+import demo.backend.ManageInternship.service.userInfo.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

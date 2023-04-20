@@ -1,14 +1,13 @@
-package demo.backend.ManageInternship.serviceImpl;
+package demo.backend.ManageInternship.serviceImpl.masterData;
 
 import demo.backend.ManageInternship.model.entity.Position;
-import demo.backend.ManageInternship.model.entity.Status;
 import demo.backend.ManageInternship.model.payload.request.masterData.PositionRequest;
 import demo.backend.ManageInternship.model.payload.response.MessageResponse;
 import demo.backend.ManageInternship.model.payload.response.masterData.PositionResponse;
 import demo.backend.ManageInternship.repository.PositionRepository;
 import demo.backend.ManageInternship.repository.StaffRepository;
 import demo.backend.ManageInternship.repository.StatusRepository;
-import demo.backend.ManageInternship.service.PositionService;
+import demo.backend.ManageInternship.service.masterData.PositionService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDate;
 import java.util.Date;
 @Log4j2
 @Service

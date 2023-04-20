@@ -1,4 +1,4 @@
-package demo.backend.ManageInternship.service;
+package demo.backend.ManageInternship.service.masterData;
 
 import demo.backend.ManageInternship.model.payload.request.masterData.PositionRequest;
 import demo.backend.ManageInternship.model.payload.response.MessageResponse;

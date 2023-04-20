@@ -1,4 +1,4 @@
-package demo.backend.ManageInternship.service;
+package demo.backend.ManageInternship.service.userInfo;
 
 import demo.backend.ManageInternship.model.payload.request.userInfo.StaffRequest;
 import demo.backend.ManageInternship.model.payload.response.MessageResponse;

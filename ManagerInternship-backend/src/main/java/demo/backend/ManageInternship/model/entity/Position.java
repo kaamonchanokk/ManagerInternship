@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
                 query = "SELECT p.POS_ID,p.POS_CODE,p.POS_NAME,s.STATUS_NAME, " +
                         "p.CREATE_DATE ,CONCAT(st.STAFF_TITLE,st.STAFF_NAME,' ',st.STAFF_LASTNAME) AS CREATE_BY ," +
                         "p.UPDATE_DATE " +
-                        ",p.UPDATE_BY " +
+                        ",CONCAT(st2.STAFF_TITLE,st2.STAFF_NAME,' ',st2.STAFF_LASTNAME) AS UPDATE_BY  " +
                         "FROM position p "+
                         "INNER JOIN status s on p.STATUS_INFO = s.STATUS_ID " +
                         "INNER JOIN staff st on p.CREATE_BY = st.STAFF_ID " +

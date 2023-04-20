@@ -3,7 +3,7 @@ package demo.backend.ManageInternship.controller.masterData;
 import demo.backend.ManageInternship.model.payload.request.masterData.PositionRequest;
 import demo.backend.ManageInternship.model.payload.response.MessageResponse;
 import demo.backend.ManageInternship.model.payload.response.masterData.PositionResponse;
-import demo.backend.ManageInternship.service.PositionService;
+import demo.backend.ManageInternship.service.masterData.PositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
