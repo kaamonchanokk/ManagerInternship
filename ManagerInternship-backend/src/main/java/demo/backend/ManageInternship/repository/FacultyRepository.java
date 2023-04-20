@@ -11,4 +11,6 @@ import java.util.List;
 public interface FacultyRepository extends JpaRepository<Faculty,Integer> {
    @Query(nativeQuery = true)
     List<FacultyData> getFacultyList(@Param("facultyCode") String facultyCode,@Param("facultyName") String facultyName);
+    @Query("SELECT f FROM Faculty f WHERE f.facultyCode = :facultyCode")
+    Faculty findByFacultyCode(@Param("facultyCode") String facultyCode);
 }

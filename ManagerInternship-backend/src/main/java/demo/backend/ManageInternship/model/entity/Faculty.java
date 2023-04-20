@@ -6,6 +6,7 @@ package demo.backend.ManageInternship.model.entity;
 
 import demo.backend.ManageInternship.model.bean.FacultyData;
 import demo.backend.ManageInternship.model.bean.PositionData;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -18,6 +19,7 @@ import javax.validation.constraints.Size;
  *
  * @author Kamonchanok
  */
+@Data
 @Entity
 @Table(name = "faculty")
 @NamedNativeQueries({
@@ -107,79 +109,6 @@ public class Faculty implements Serializable {
         this.facultyName = facultyName;
         this.createDate = createDate;
     }
-
-    public Integer getFacultyId() {
-        return facultyId;
-    }
-
-    public void setFacultyId(Integer facultyId) {
-        this.facultyId = facultyId;
-    }
-
-    public String getFacultyCode() {
-        return facultyCode;
-    }
-
-    public void setFacultyCode(String facultyCode) {
-        this.facultyCode = facultyCode;
-    }
-
-    public String getFacultyName() {
-        return facultyName;
-    }
-
-    public void setFacultyName(String facultyName) {
-        this.facultyName = facultyName;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public List<Department> getDepartmentList() {
-        return departmentList;
-    }
-
-    public void setDepartmentList(List<Department> departmentList) {
-        this.departmentList = departmentList;
-    }
-
-    public Staff getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Staff createBy) {
-        this.createBy = createBy;
-    }
-
-    public Staff getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Staff updateBy) {
-        this.updateBy = updateBy;
-    }
-
-    public Status getStatusInfo() {
-        return statusInfo;
-    }
-
-    public void setStatusInfo(Status statusInfo) {
-        this.statusInfo = statusInfo;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;

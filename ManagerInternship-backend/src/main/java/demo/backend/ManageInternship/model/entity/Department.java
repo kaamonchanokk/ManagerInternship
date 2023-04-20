@@ -4,24 +4,14 @@
  */
 package demo.backend.ManageInternship.model.entity;
 
+import demo.backend.ManageInternship.model.bean.DepartmentData;
+import demo.backend.ManageInternship.model.bean.FacultyData;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,10 +19,48 @@ import javax.validation.constraints.Size;
  *
  * @author Kamonchanok
  */
+@Data
 @Entity
 @Table(name = "department")
-@NamedQueries({
-    @NamedQuery(name = "Department.findAll", query = "SELECT d FROM Department d")})
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "Department.getDepartmentList",
+                query = "SELECT d.DEP_ID,d.DEP_CODE,d.DEP_NAME,f.FACULTY_NAME " +
+                        ",s.STATUS_NAME" +
+                        ",d.CREATE_DATE" +
+                        ",CONCAT(sf1.STAFF_TITLE,sf1.STAFF_NAME,' ',sf1.STAFF_LASTNAME) AS CREATE_BY " +
+                        ",f.UPDATE_DATE  " +
+                        ",CONCAT(sf2.STAFF_TITLE,sf2.STAFF_NAME,' ',sf2.STAFF_LASTNAME) AS UPDATE_BY   " +
+                        " FROM department d " +
+                        " INNER JOIN faculty f on f.FACULTY_ID = d.FACULTY_ID " +
+                        "INNER JOIN status s on d.STATUS_INFO = s.STATUS_ID " +
+                        "INNER JOIN staff sf1 on d.CREATE_BY = sf1.STAFF_ID " +
+                        "LEFT JOIN staff sf2 on d.UPDATE_BY = sf2.STAFF_ID " +
+                        "WHERE (d.DEP_CODE = :depCode OR :depCode IS NULL) " +
+                        "AND (d.DEP_CODE = :depName OR :depName IS NULL) " +
+                        "AND (f.FACULTY_NAME = :facultyName OR :facultyName IS NULL) "
+                ,
+                resultSetMapping = "DepartmentListMapping"
+        )
+})
+@SqlResultSetMappings({
+        @SqlResultSetMapping(name = "DepartmentListMapping", classes = {
+                @ConstructorResult(targetClass = DepartmentData.class,
+                        columns = {
+                                @ColumnResult(name = "DEP_ID", type = Integer.class),
+                                @ColumnResult(name = "DEP_CODE", type = String.class),
+                                @ColumnResult(name = "DEP_NAME", type = String.class),
+                                @ColumnResult(name = "FACULTY_NAME", type = String.class),
+                                @ColumnResult(name = "STATUS_NAME", type = String.class),
+                                @ColumnResult(name = "CREATE_DATE", type = Date.class),
+                                @ColumnResult(name = "CREATE_BY", type = String.class),
+                                @ColumnResult(name = "UPDATE_DATE", type = Date.class),
+                                @ColumnResult(name = "UPDATE_BY", type = String.class),
+
+                        }
+                )
+        })
+})
 public class Department implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -88,94 +116,6 @@ public class Department implements Serializable {
         this.depCode = depCode;
         this.depName = depName;
         this.createDate = createDate;
-    }
-
-    public Integer getDepId() {
-        return depId;
-    }
-
-    public void setDepId(Integer depId) {
-        this.depId = depId;
-    }
-
-    public String getDepCode() {
-        return depCode;
-    }
-
-    public void setDepCode(String depCode) {
-        this.depCode = depCode;
-    }
-
-    public String getDepName() {
-        return depName;
-    }
-
-    public void setDepName(String depName) {
-        this.depName = depName;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public List<Teacher> getTeacherList() {
-        return teacherList;
-    }
-
-    public void setTeacherList(List<Teacher> teacherList) {
-        this.teacherList = teacherList;
-    }
-
-    public List<Student> getStudentList() {
-        return studentList;
-    }
-
-    public void setStudentList(List<Student> studentList) {
-        this.studentList = studentList;
-    }
-
-    public Faculty getFacultyId() {
-        return facultyId;
-    }
-
-    public void setFacultyId(Faculty facultyId) {
-        this.facultyId = facultyId;
-    }
-
-    public Staff getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Staff createBy) {
-        this.createBy = createBy;
-    }
-
-    public Staff getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Staff updateBy) {
-        this.updateBy = updateBy;
-    }
-
-    public Status getStatusInfo() {
-        return statusInfo;
-    }
-
-    public void setStatusInfo(Status statusInfo) {
-        this.statusInfo = statusInfo;
     }
 
     @Override
