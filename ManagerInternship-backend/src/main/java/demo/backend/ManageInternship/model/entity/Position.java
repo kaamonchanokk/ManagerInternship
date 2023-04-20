@@ -4,24 +4,14 @@
  */
 package demo.backend.ManageInternship.model.entity;
 
+import demo.backend.ManageInternship.model.bean.PositionData;
+import demo.backend.ManageInternship.model.bean.StaffList;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,10 +19,46 @@ import javax.validation.constraints.Size;
  *
  * @author Kamonchanok
  */
+@Data
 @Entity
-@Table(name = "position")
-@NamedQueries({
-    @NamedQuery(name = "Position.findAll", query = "SELECT p FROM Position p")})
+@Table(name = "`position`")
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "Position.getPositionList",
+                query = "SELECT p.POS_ID,p.POS_CODE,p.POS_NAME,s.STATUS_NAME, " +
+                        "p.CREATE_DATE ,CONCAT(st.STAFF_TITLE,st.STAFF_NAME,' ',st.STAFF_LASTNAME) AS CREATE_BY ," +
+                        "p.UPDATE_DATE " +
+                        ",p.UPDATE_BY " +
+                        "FROM position p "+
+                        "INNER JOIN status s on p.STATUS_INFO = s.STATUS_ID " +
+                        "INNER JOIN staff st on p.CREATE_BY = st.STAFF_ID " +
+                        "LEFT JOIN staff st2 on p.UPDATE_BY = st2.STAFF_ID "+
+                        "WHERE (p.POS_CODE = :positionCode OR :positionCode IS NULL) " +
+                        "AND (p.POS_NAME = :positionName OR :positionName IS NULL) "
+//                        "AND (st.STAFF_NAME = :staffName OR :staffName IS NULL) " +
+//                        "AND (st.STAFF_LASTNAME = :staffLastName OR :staffLastName IS NULL) " +
+//                        "AND (p.POS_NAME = :staffPosition OR :staffPosition IS NULL) "
+                ,
+                resultSetMapping = "PositionListMapping"
+        )
+})
+@SqlResultSetMappings({
+        @SqlResultSetMapping(name = "PositionListMapping", classes = {
+                @ConstructorResult(targetClass = PositionData.class,
+                        columns = {
+                                @ColumnResult(name = "POS_ID", type = Integer.class),
+                                @ColumnResult(name = "POS_CODE", type = String.class),
+                                @ColumnResult(name = "POS_NAME", type = String.class),
+                                @ColumnResult(name = "STATUS_NAME", type = String.class),
+                                @ColumnResult(name = "CREATE_DATE", type = Date.class),
+                                @ColumnResult(name = "CREATE_BY", type = String.class),
+                                @ColumnResult(name = "UPDATE_DATE", type = Date.class),
+                                @ColumnResult(name = "UPDATE_BY", type = String.class),
+
+                        }
+                )
+        })
+})
 public class Position implements Serializable {
 
     @Basic(optional = false)
@@ -45,8 +71,8 @@ public class Position implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "POS_NAME")
     private String posName;
-    @Basic(optional = false)
-    @NotNull
+//    @Basic(optional = false)
+//    @NotNull
     @Column(name = "CREATE_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
