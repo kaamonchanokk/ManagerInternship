@@ -4,24 +4,13 @@
  */
 package demo.backend.ManageInternship.model.entity;
 
+import demo.backend.ManageInternship.model.bean.FacultyData;
+import demo.backend.ManageInternship.model.bean.PositionData;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,8 +20,42 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "faculty")
-@NamedQueries({
-    @NamedQuery(name = "Faculty.findAll", query = "SELECT f FROM Faculty f")})
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "Faculty.getFacultyList",
+                query = "SELECT f.FACULTY_ID,f.FACULTY_CODE,f.FACULTY_NAME" +
+                        ",s.STATUS_NAME" +
+                        ",f.CREATE_DATE" +
+                        ",CONCAT(sf1.STAFF_TITLE,sf1.STAFF_NAME,' ',sf1.STAFF_LASTNAME) AS CREATE_BY " +
+                        ",f.UPDATE_DATE  " +
+                        ",CONCAT(sf2.STAFF_TITLE,sf2.STAFF_NAME,' ',sf2.STAFF_LASTNAME) AS UPDATE_BY   " +
+                        " FROM faculty f " +
+                        "INNER JOIN status s on f.STATUS_INFO = s.STATUS_ID " +
+                        "INNER JOIN staff sf1 on f.CREATE_BY = sf1.STAFF_ID " +
+                        "LEFT JOIN staff sf2 on f.UPDATE_BY = sf2.STAFF_ID " +
+                        "WHERE (f.FACULTY_CODE = :facultyCode OR :facultyCode IS NULL) " +
+                        "AND (f.FACULTY_NAME = :facultyName OR :facultyName IS NULL) "
+                ,
+                resultSetMapping = "FacultyListMapping"
+        )
+})
+@SqlResultSetMappings({
+        @SqlResultSetMapping(name = "FacultyListMapping", classes = {
+                @ConstructorResult(targetClass = FacultyData.class,
+                        columns = {
+                                @ColumnResult(name = "FACULTY_ID", type = Integer.class),
+                                @ColumnResult(name = "FACULTY_CODE", type = String.class),
+                                @ColumnResult(name = "FACULTY_NAME", type = String.class),
+                                @ColumnResult(name = "STATUS_NAME", type = String.class),
+                                @ColumnResult(name = "CREATE_DATE", type = Date.class),
+                                @ColumnResult(name = "CREATE_BY", type = String.class),
+                                @ColumnResult(name = "UPDATE_DATE", type = Date.class),
+                                @ColumnResult(name = "UPDATE_BY", type = String.class),
+
+                        }
+                )
+        })
+})
 public class Faculty implements Serializable {
 
     private static final long serialVersionUID = 1L;
