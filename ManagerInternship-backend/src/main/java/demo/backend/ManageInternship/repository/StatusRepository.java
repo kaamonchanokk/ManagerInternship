@@ -10,4 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface StatusRepository extends JpaRepository<Status,Integer> {
     @Query("SELECT s FROM Status s WHERE s.statusCode = :code AND s.statusType = 'STATUS_INFO' ")
     Status findByStatusCode(@Param("code") String code);
+
+    @Query("SELECT s FROM Status s WHERE s.statusCode = :code AND s.statusType = 'TEACHER_STATUS' ")
+    Status findByStatusTeacherCode(@Param("code") String code);
 }

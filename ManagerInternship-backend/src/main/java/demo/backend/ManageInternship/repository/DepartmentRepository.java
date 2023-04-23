@@ -16,4 +16,7 @@ public interface DepartmentRepository extends JpaRepository<Department,Integer> 
 
     @Query("SELECT COUNT(d) FROM Department d INNER JOIN Faculty f on d.facultyId = f.facultyId WHERE f.facultyCode = :facultyCode")
     Integer countDepByFaculty(@Param("facultyCode") String facultyCode);
+
+    @Query("SELECT d FROM Department d WHERE d.depCode = :departmentCode")
+    Department getDepartmentByCode(String departmentCode);
 }

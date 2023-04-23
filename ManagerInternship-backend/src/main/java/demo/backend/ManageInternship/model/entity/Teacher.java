@@ -4,24 +4,14 @@
  */
 package demo.backend.ManageInternship.model.entity;
 
+import demo.backend.ManageInternship.model.bean.StaffList;
+import demo.backend.ManageInternship.model.bean.TeacherData;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,10 +19,65 @@ import javax.validation.constraints.Size;
  *
  * @author Kamonchanok
  */
+@Data
 @Entity
 @Table(name = "teacher")
-@NamedQueries({
-    @NamedQuery(name = "Teacher.findAll", query = "SELECT t FROM Teacher t")})
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "Teacher.getTeacherList",
+//                private Integer teacherId;
+//                private String teacherCode;
+//                private String teacherName;
+//                private String statusTeacher;
+//                private String faculty;
+//                private String department;
+//                private Date createDate;
+//                private String createBy;
+//                private Date updateDate;
+//                private String updateBy;
+                query =  "SELECT t.TEACHER_ID,t.TEACHER_CODE," +
+                        "CONCAT(t.TEACHER_TITLE,t.TEACHER_NAME,' ',t.TEACHER_LASTNAME) AS TEACHER_NAME " +
+                        ",st.STATUS_NAME AS STATUS_TEACHER " +
+                        ",f.FACULTY_NAME  " +
+                        ",d.DEP_NAME " +
+                        ",s.STATUS_NAME " +
+                        ",t.CREATE_DATE " +
+                        ",CONCAT(sta1.STAFF_TITLE,sta1.STAFF_NAME,' ',sta1.STAFF_LASTNAME) AS CREATE_BY  " +
+                        ",t.UPDATE_DATE" +
+                        ",CONCAT(sta2.STAFF_TITLE,sta2.STAFF_NAME,' ',sta2.STAFF_LASTNAME) AS UPDATE_BY  " +
+                        "FROM teacher t " +
+                        "INNER JOIN status s on t.STATUS_INFO = s.STATUS_ID " +
+                        "INNER JOIN status st on t.STATUS_TEACHER = st.STATUS_ID " +
+                        "INNER JOIN department d on t.DEP_ID = d.DEP_ID  " +
+                        "INNER JOIN faculty f on d.FACULTY_ID = f.FACULTY_ID " +
+                        "INNER JOIN staff sta1 on t.CREATE_BY = sta1.STAFF_ID " +
+                        "LEFT JOIN staff sta2 on t.UPDATE_BY = sta1.STAFF_ID " +
+                        "WHERE  (t.TEACHER_CODE = :teacherCode OR :teacherCode IS NULL) " +
+                        "AND (t.TEACHER_NAME = :teacherName OR :teacherName IS NULL) " +
+                        "AND (t.TEACHER_LASTNAME = :teacherLastName OR :teacherLastName IS NULL) "
+                ,
+                resultSetMapping = "TeacherListMapping"
+        )
+})
+@SqlResultSetMappings({
+        @SqlResultSetMapping(name = "TeacherListMapping", classes = {
+                @ConstructorResult(targetClass = TeacherData.class,
+                        columns = {
+                                @ColumnResult(name = "TEACHER_ID", type = Integer.class),
+                                @ColumnResult(name = "TEACHER_CODE", type = String.class),
+                                @ColumnResult(name = "TEACHER_NAME", type = String.class),
+                                @ColumnResult(name = "STATUS_TEACHER", type = String.class),
+                                @ColumnResult(name = "FACULTY_NAME", type = String.class),
+                                @ColumnResult(name = "DEP_NAME", type = String.class),
+                                @ColumnResult(name = "STATUS_NAME", type = String.class),
+                                @ColumnResult(name = "CREATE_DATE", type = Date.class),
+                                @ColumnResult(name = "CREATE_BY", type = String.class),
+                                @ColumnResult(name = "UPDATE_DATE", type = Date.class),
+                                @ColumnResult(name = "UPDATE_BY", type = String.class),
+                        }
+                )
+        })
+})
 public class Teacher implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,10 +106,12 @@ public class Teacher implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "TEACHER_LASTNAME")
     private String teacherLastname;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "STATUS_TEACHER")
-    private int statusTeacher;
+//    @Basic(optional = false)
+//    @NotNull
+//    @Column(name = "STATUS_TEACHER")
+    @JoinColumn(name = "STATUS_TEACHER", referencedColumnName = "STATUS_ID")
+    @ManyToOne(optional = false)
+    private Status statusTeacher;
     @Basic(optional = false)
     @NotNull
     @Column(name = "CREATE_DATE")
@@ -87,6 +134,7 @@ public class Teacher implements Serializable {
     @JoinColumn(name = "DEP_ID", referencedColumnName = "DEP_ID")
     @ManyToOne(optional = false)
     private Department depId;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "advisor")
     private List<Student> studentList;
 
@@ -97,7 +145,7 @@ public class Teacher implements Serializable {
         this.teacherId = teacherId;
     }
 
-    public Teacher(Integer teacherId, String teacherCode, String teacherTitle, String teacherName, String teacherLastname, int statusTeacher, Date createDate) {
+    public Teacher(Integer teacherId, String teacherCode, String teacherTitle, String teacherName, String teacherLastname, Status statusTeacher, Date createDate) {
         this.teacherId = teacherId;
         this.teacherCode = teacherCode;
         this.teacherTitle = teacherTitle;
@@ -106,119 +154,6 @@ public class Teacher implements Serializable {
         this.statusTeacher = statusTeacher;
         this.createDate = createDate;
     }
-
-    public Integer getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(Integer teacherId) {
-        this.teacherId = teacherId;
-    }
-
-    public String getTeacherCode() {
-        return teacherCode;
-    }
-
-    public void setTeacherCode(String teacherCode) {
-        this.teacherCode = teacherCode;
-    }
-
-    public String getTeacherTitle() {
-        return teacherTitle;
-    }
-
-    public void setTeacherTitle(String teacherTitle) {
-        this.teacherTitle = teacherTitle;
-    }
-
-    public String getTeacherName() {
-        return teacherName;
-    }
-
-    public void setTeacherName(String teacherName) {
-        this.teacherName = teacherName;
-    }
-
-    public String getTeacherLastname() {
-        return teacherLastname;
-    }
-
-    public void setTeacherLastname(String teacherLastname) {
-        this.teacherLastname = teacherLastname;
-    }
-
-    public int getStatusTeacher() {
-        return statusTeacher;
-    }
-
-    public void setStatusTeacher(int statusTeacher) {
-        this.statusTeacher = statusTeacher;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public List<Request> getRequestList() {
-        return requestList;
-    }
-
-    public void setRequestList(List<Request> requestList) {
-        this.requestList = requestList;
-    }
-
-    public Staff getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Staff createBy) {
-        this.createBy = createBy;
-    }
-
-    public Staff getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Staff updateBy) {
-        this.updateBy = updateBy;
-    }
-
-    public Status getStatusInfo() {
-        return statusInfo;
-    }
-
-    public void setStatusInfo(Status statusInfo) {
-        this.statusInfo = statusInfo;
-    }
-
-    public Department getDepId() {
-        return depId;
-    }
-
-    public void setDepId(Department depId) {
-        this.depId = depId;
-    }
-
-    public List<Student> getStudentList() {
-        return studentList;
-    }
-
-    public void setStudentList(List<Student> studentList) {
-        this.studentList = studentList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
