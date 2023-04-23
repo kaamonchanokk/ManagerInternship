@@ -13,4 +13,7 @@ public interface StatusRepository extends JpaRepository<Status,Integer> {
 
     @Query("SELECT s FROM Status s WHERE s.statusCode = :code AND s.statusType = 'TEACHER_STATUS' ")
     Status findByStatusTeacherCode(@Param("code") String code);
+
+    @Query("SELECT s FROM Status s WHERE s.statusCode = :code AND s.statusType = 'STUDENT_STATUS' ")
+    Status findByStatusStudentCode(@Param("code") String code);
 }

@@ -13,4 +13,6 @@ public interface TeacherRepository extends JpaRepository<Teacher,Integer> {
     List<TeacherData> getTeacherList(@Param("teacherCode") String teacherCode,@Param("teacherName") String teacherName,@Param("teacherLastName") String teacherLastName);
     @Query("SELECT COUNT(t) FROM Teacher t inner join Department d on t.depId = d.depId WHERE d.depCode = :departmentCode ")
     Integer countDepartment(@Param("departmentCode") String departmentCode);
+    @Query("SELECT t FROM Teacher t  WHERE t.teacherCode= :advisorCode ")
+    Teacher findByCode(@Param("advisorCode")  String advisorCode);
 }

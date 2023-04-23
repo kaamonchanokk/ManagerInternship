@@ -4,24 +4,16 @@
  */
 package demo.backend.ManageInternship.model.entity;
 
+import demo.backend.ManageInternship.model.bean.StaffList;
+import demo.backend.ManageInternship.model.bean.StudentData;
+import lombok.Data;
+import org.springframework.data.repository.query.Param;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,10 +21,80 @@ import javax.validation.constraints.Size;
  *
  * @author Kamonchanok
  */
+@Data
 @Entity
 @Table(name = "student")
-@NamedQueries({
-    @NamedQuery(name = "Student.findAll", query = "SELECT s FROM Student s")})
+@NamedNativeQueries({
+        @NamedNativeQuery(
+//                private Integer studentId;
+//                private String studentCode;
+//                private String studentName;
+//                private String studentYear;
+//                private String departmentName;
+//                private String facultyName;
+//                private BigDecimal studentGrade;
+//                private String statusStudent;
+//                private String advisorName;
+//                private String statusInfo;
+//                private Date createdDate;
+//                private String createBy;
+//                private Date updateDate;
+//                private String updateBy;
+                name = "Student.getStudentList",
+                query = "SELECT stu.STUDENT_ID" +
+                        ",stu.STUDENT_CODE" +
+                        ",CONCAT(stu.STUDENT_TITLE,stu.STUDENT_NAME,' ',stu.STUDENT_LASTNAME) AS STUDENT_NAME " +
+                        ",y.YEAR_NUMBER" +
+                        ",f.FACULTY_NAME" +
+                        ",d.DEP_NAME" +
+                        ",stu.STUDENT_GRADE" +
+                        ",s2.STATUS_NAME" +
+                        ",CONCAT(t.TEACHER_TITLE,t.TEACHER_NAME,' ',t.TEACHER_LASTNAME) AS TEACHER_NAME  " +
+                        ",s.STATUS_NAME AS STATUS_INFO " +
+                        ",stu.CREATE_DATE" +
+                        ",CONCAT(sf.STAFF_TITLE,sf.STAFF_NAME,' ',sf.STAFF_LASTNAME) AS CREATE_BY  " +
+                        ",stu.UPDATE_DATE " +
+                        ",CONCAT(sf2.STAFF_TITLE,sf2.STAFF_NAME,' ',sf2.STAFF_LASTNAME) AS UPDATE_BY  " +
+                        "FROM student stu " +
+                        "INNER JOIN department d on stu.DEP_ID = d.DEP_ID " +
+                        "INNER JOIN faculty f on f.FACULTY_ID = d.FACULTY_ID " +
+                        "INNER JOIN status s on stu.STATUS_INFO = s.STATUS_ID " +
+                        "INNER JOIN status s2 on s2.STATUS_ID = stu.STATUS_STUDENT " +
+                        "INNER JOIN teacher t on t.TEACHER_ID = stu.ADVISOR " +
+                        "INNER JOIN year y on y.YEAR_ID = stu.STUDENT_YEAR " +
+                        "INNER JOIN staff sf on sf.STAFF_ID =  stu.CREATE_BY " +
+                        "LEFT JOIN staff sf2 on sf.STAFF_ID =  stu.UPDATE_BY " +
+                        "WHERE  (stu.STUDENT_CODE = :studentCode OR :studentCode IS NULL) " +
+                        "AND  (stu.STUDENT_NAME = :studentName OR :studentName IS NULL)" +
+                        "AND (stu.STUDENT_LASTNAME = :studentLastName OR :studentLastName IS NULL) " +
+                        "AND (d.DEP_NAME = :departmentName OR :departmentName IS NULL) " +
+                        "AND (f.FACULTY_NAME = :facultyName OR :facultyName IS NULL) "
+                ,
+                resultSetMapping = "StudentListMapping"
+        )
+})
+@SqlResultSetMappings({
+        @SqlResultSetMapping(name = "StudentListMapping", classes = {
+                @ConstructorResult(targetClass = StudentData.class,
+                        columns = {
+                                @ColumnResult(name = "STUDENT_ID", type = Integer.class),
+                                @ColumnResult(name = "STUDENT_CODE", type = String.class),
+                                @ColumnResult(name = "STUDENT_NAME", type = String.class),
+                                @ColumnResult(name = "YEAR_NUMBER", type = String.class),
+                                @ColumnResult(name = "FACULTY_NAME", type = String.class),
+                                @ColumnResult(name = "DEP_NAME", type = String.class),
+                                @ColumnResult(name = "STUDENT_GRADE", type = BigDecimal.class),
+                                @ColumnResult(name = "STATUS_NAME", type = String.class),
+                                @ColumnResult(name = "TEACHER_NAME", type = String.class),
+                                @ColumnResult(name = "STATUS_INFO", type = String.class),
+                                @ColumnResult(name = "CREATE_DATE", type = Date.class),
+                                @ColumnResult(name = "CREATE_BY", type = String.class),
+                                @ColumnResult(name = "UPDATE_DATE", type = Date.class),
+                                @ColumnResult(name = "UPDATE_BY", type = String.class),
+                        }
+                )
+        })
+})
 public class Student implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -113,150 +175,6 @@ public class Student implements Serializable {
         this.studentName = studentName;
         this.studentLastname = studentLastname;
         this.studentGrade = studentGrade;
-    }
-
-    public Integer getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(Integer studentId) {
-        this.studentId = studentId;
-    }
-
-    public String getStudentCode() {
-        return studentCode;
-    }
-
-    public void setStudentCode(String studentCode) {
-        this.studentCode = studentCode;
-    }
-
-    public String getStudentTitle() {
-        return studentTitle;
-    }
-
-    public void setStudentTitle(String studentTitle) {
-        this.studentTitle = studentTitle;
-    }
-
-    public String getStudentName() {
-        return studentName;
-    }
-
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
-    }
-
-    public String getStudentLastname() {
-        return studentLastname;
-    }
-
-    public void setStudentLastname(String studentLastname) {
-        this.studentLastname = studentLastname;
-    }
-
-    public double getStudentGrade() {
-        return studentGrade;
-    }
-
-    public void setStudentGrade(double studentGrade) {
-        this.studentGrade = studentGrade;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public List<Request> getRequestList() {
-        return requestList;
-    }
-
-    public void setRequestList(List<Request> requestList) {
-        this.requestList = requestList;
-    }
-
-    public List<Request> getRequestList1() {
-        return requestList1;
-    }
-
-    public void setRequestList1(List<Request> requestList1) {
-        this.requestList1 = requestList1;
-    }
-
-    public List<Request> getRequestList2() {
-        return requestList2;
-    }
-
-    public void setRequestList2(List<Request> requestList2) {
-        this.requestList2 = requestList2;
-    }
-
-    public Status getStatusStudent() {
-        return statusStudent;
-    }
-
-    public void setStatusStudent(Status statusStudent) {
-        this.statusStudent = statusStudent;
-    }
-
-    public Status getStatusInfo() {
-        return statusInfo;
-    }
-
-    public void setStatusInfo(Status statusInfo) {
-        this.statusInfo = statusInfo;
-    }
-
-    public Teacher getAdvisor() {
-        return advisor;
-    }
-
-    public void setAdvisor(Teacher advisor) {
-        this.advisor = advisor;
-    }
-
-    public Staff getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Staff createBy) {
-        this.createBy = createBy;
-    }
-
-    public Staff getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Staff updateBy) {
-        this.updateBy = updateBy;
-    }
-
-    public Department getDepId() {
-        return depId;
-    }
-
-    public void setDepId(Department depId) {
-        this.depId = depId;
-    }
-
-    public Year getStudentYear() {
-        return studentYear;
-    }
-
-    public void setStudentYear(Year studentYear) {
-        this.studentYear = studentYear;
     }
 
     @Override
