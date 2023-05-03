@@ -38,7 +38,8 @@ import javax.validation.constraints.Size;
                         "INNER JOIN status s on c.STATUS_INFO = s.STATUS_ID " +
                         "INNER JOIN staff st1 on st1.STAFF_ID = c.CREATE_BY " +
                         "LEFT JOIN staff st2 on st2.STAFF_ID = c.UPDATE_BY "+
-                        "WHERE  (c.COMPANY_NAME = :companyName OR :companyName IS NULL) "
+                        "WHERE  (c.COMPANY_NAME LIKE CONCAT('%',:companyName,'%') OR :companyName IS NULL) " +
+                        "AND s.STATUS_CODE = 'AC'"
                 ,
                 resultSetMapping = "CompanyListMapping"
         )

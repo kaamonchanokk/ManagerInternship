@@ -34,7 +34,8 @@ import javax.validation.constraints.Size;
                         "INNER JOIN staff st on p.CREATE_BY = st.STAFF_ID " +
                         "LEFT JOIN staff st2 on p.UPDATE_BY = st2.STAFF_ID "+
                         "WHERE (p.POS_CODE = :positionCode OR :positionCode IS NULL) " +
-                        "AND (p.POS_NAME = :positionName OR :positionName IS NULL) "
+                        "AND (p.POS_NAME LIKE CONCAT('%', :positionName ,'%') OR :positionName IS NULL) " +
+                        "AND s.STATUS_CODE = 'AC'"
 //                        "AND (st.STAFF_NAME = :staffName OR :staffName IS NULL) " +
 //                        "AND (st.STAFF_LASTNAME = :staffLastName OR :staffLastName IS NULL) " +
 //                        "AND (p.POS_NAME = :staffPosition OR :staffPosition IS NULL) "

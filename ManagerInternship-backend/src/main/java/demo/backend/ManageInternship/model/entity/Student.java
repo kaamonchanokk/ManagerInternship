@@ -63,12 +63,13 @@ import javax.validation.constraints.Size;
                         "INNER JOIN teacher t on t.TEACHER_ID = stu.ADVISOR " +
                         "INNER JOIN year y on y.YEAR_ID = stu.STUDENT_YEAR " +
                         "INNER JOIN staff sf on sf.STAFF_ID =  stu.CREATE_BY " +
-                        "LEFT JOIN staff sf2 on sf.STAFF_ID =  stu.UPDATE_BY " +
+                        "LEFT JOIN staff sf2 on sf2.STAFF_ID =  stu.UPDATE_BY " +
                         "WHERE  (stu.STUDENT_CODE = :studentCode OR :studentCode IS NULL) " +
-                        "AND  (stu.STUDENT_NAME = :studentName OR :studentName IS NULL)" +
-                        "AND (stu.STUDENT_LASTNAME = :studentLastName OR :studentLastName IS NULL) " +
-                        "AND (d.DEP_NAME = :departmentName OR :departmentName IS NULL) " +
-                        "AND (f.FACULTY_NAME = :facultyName OR :facultyName IS NULL) "
+                        "AND  (stu.STUDENT_NAME LIKE CONCAT('%',:studentName,'%') OR :studentName IS NULL)" +
+                        "AND (stu.STUDENT_LASTNAME LIKE CONCAT('%',:studentLastName,'%') OR :studentLastName IS NULL) " +
+                        "AND (d.DEP_NAME LIKE CONCAT('%',:departmentName,'%') OR :departmentName IS NULL) " +
+                        "AND (f.FACULTY_NAME LIKE CONCAT('%',:facultyName,'%') OR :facultyName IS NULL)" +
+                        "AND s.STATUS_CODE = 'AC' "
                 ,
                 resultSetMapping = "StudentListMapping"
         )

@@ -46,7 +46,8 @@ import javax.validation.constraints.Size;
                         "AND (t.TEACHER_NAME LIKE CONCAT('%', :teacherName, '%') OR :teacherName IS NULL) " +
                         "AND (t.TEACHER_LASTNAME LIKE CONCAT('%',:teacherLastName, '%') OR :teacherLastName IS NULL) " +
                         "AND (d.DEP_NAME LIKE CONCAT('%',:departmentName, '%') OR :departmentName IS NULL) " +
-                        "AND (f.FACULTY_NAME LIKE CONCAT('%',:facultyName, '%') OR :facultyName IS NULL) "
+                        "AND (f.FACULTY_NAME LIKE CONCAT('%',:facultyName, '%') OR :facultyName IS NULL) " +
+                        "AND s.STATUS_CODE = 'AC'"
                 ,
                 resultSetMapping = "TeacherListMapping"
         )

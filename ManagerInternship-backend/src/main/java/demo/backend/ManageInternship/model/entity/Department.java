@@ -37,8 +37,9 @@ import javax.validation.constraints.Size;
                         "INNER JOIN staff sf1 on d.CREATE_BY = sf1.STAFF_ID " +
                         "LEFT JOIN staff sf2 on d.UPDATE_BY = sf2.STAFF_ID " +
                         "WHERE (d.DEP_CODE = :depCode OR :depCode IS NULL) " +
-                        "AND (d.DEP_CODE = :depName OR :depName IS NULL) " +
-                        "AND (f.FACULTY_NAME = :facultyName OR :facultyName IS NULL) "
+                        "AND (d.DEP_NAME LIKE CONCAT('%', :depName,'%') OR :depName IS NULL) " +
+                        "AND (f.FACULTY_NAME LIKE CONCAT('%', :facultyName,'%') OR :facultyName IS NULL) " +
+                        "AND s.STATUS_CODE = 'AC' "
                 ,
                 resultSetMapping = "DepartmentListMapping"
         )

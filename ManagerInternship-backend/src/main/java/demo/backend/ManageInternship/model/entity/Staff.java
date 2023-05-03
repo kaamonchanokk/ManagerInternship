@@ -28,9 +28,10 @@ import javax.validation.constraints.Size;
                         "INNER JOIN position p on st.POS_ID = p.POS_ID "+
                         "WHERE  (st.STAFF_ID = :staffId OR :staffId IS NULL) " +
                         "AND  (st.STAFF_CODE = :staffCode OR :staffCode IS NULL)" +
-                        "AND (st.STAFF_NAME = :staffName OR :staffName IS NULL) " +
-                        "AND (st.STAFF_LASTNAME = :staffLastName OR :staffLastName IS NULL) " +
-                        "AND (p.POS_NAME = :staffPosition OR :staffPosition IS NULL) "
+                        "AND (st.STAFF_NAME LIKE CONCAT('%',:staffName,'%') OR :staffName IS NULL) " +
+                        "AND (st.STAFF_LASTNAME LIKE CONCAT('%',:staffLastName,'%') OR :staffLastName IS NULL) " +
+                        "AND (p.POS_NAME LIKE CONCAT('%',:staffPosition,'%') OR :staffPosition IS NULL)" +
+                        "AND s.STATUS_CODE = 'AC' "
                 ,
                 resultSetMapping = "StaffListMapping"
         )
