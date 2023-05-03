@@ -25,16 +25,6 @@ import javax.validation.constraints.Size;
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = "Teacher.getTeacherList",
-//                private Integer teacherId;
-//                private String teacherCode;
-//                private String teacherName;
-//                private String statusTeacher;
-//                private String faculty;
-//                private String department;
-//                private Date createDate;
-//                private String createBy;
-//                private Date updateDate;
-//                private String updateBy;
                 query =  "SELECT t.TEACHER_ID,t.TEACHER_CODE," +
                         "CONCAT(t.TEACHER_TITLE,t.TEACHER_NAME,' ',t.TEACHER_LASTNAME) AS TEACHER_NAME " +
                         ",st.STATUS_NAME AS STATUS_TEACHER " +
@@ -51,10 +41,12 @@ import javax.validation.constraints.Size;
                         "INNER JOIN department d on t.DEP_ID = d.DEP_ID  " +
                         "INNER JOIN faculty f on d.FACULTY_ID = f.FACULTY_ID " +
                         "INNER JOIN staff sta1 on t.CREATE_BY = sta1.STAFF_ID " +
-                        "LEFT JOIN staff sta2 on t.UPDATE_BY = sta1.STAFF_ID " +
+                        "LEFT JOIN staff sta2 on t.UPDATE_BY = sta2.STAFF_ID " +
                         "WHERE  (t.TEACHER_CODE = :teacherCode OR :teacherCode IS NULL) " +
-                        "AND (t.TEACHER_NAME = :teacherName OR :teacherName IS NULL) " +
-                        "AND (t.TEACHER_LASTNAME = :teacherLastName OR :teacherLastName IS NULL) "
+                        "AND (t.TEACHER_NAME LIKE CONCAT('%', :teacherName, '%') OR :teacherName IS NULL) " +
+                        "AND (t.TEACHER_LASTNAME LIKE CONCAT('%',:teacherLastName, '%') OR :teacherLastName IS NULL) " +
+                        "AND (d.DEP_NAME LIKE CONCAT('%',:departmentName, '%') OR :departmentName IS NULL) " +
+                        "AND (f.FACULTY_NAME LIKE CONCAT('%',:facultyName, '%') OR :facultyName IS NULL) "
                 ,
                 resultSetMapping = "TeacherListMapping"
         )

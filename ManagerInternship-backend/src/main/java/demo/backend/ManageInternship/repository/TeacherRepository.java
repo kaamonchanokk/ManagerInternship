@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface TeacherRepository extends JpaRepository<Teacher,Integer> {
     @Query(nativeQuery = true)
-    List<TeacherData> getTeacherList(@Param("teacherCode") String teacherCode,@Param("teacherName") String teacherName,@Param("teacherLastName") String teacherLastName);
+    List<TeacherData> getTeacherList(@Param("teacherCode") String teacherCode,@Param("teacherName") String teacherName,@Param("teacherLastName") String teacherLastName,@Param("departmentName") String departmentName,@Param("facultyName") String facultyName);
     @Query("SELECT COUNT(t) FROM Teacher t inner join Department d on t.depId = d.depId WHERE d.depCode = :departmentCode ")
     Integer countDepartment(@Param("departmentCode") String departmentCode);
     @Query("SELECT t FROM Teacher t  WHERE t.teacherCode= :advisorCode ")

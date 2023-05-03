@@ -19,9 +19,11 @@ public class TeacherController {
     public ResponseEntity<TeacherResponse> getTeacherList(
             @RequestParam(value = "teacherCode",required = false) String teacherCode,
             @RequestParam(value = "teacherName",required = false) String teacherName,
-            @RequestParam(value = "teacherLastName",required = false) String teacherLastName
+            @RequestParam(value = "teacherLastName",required = false) String teacherLastName,
+            @RequestParam(value = "departmentName",required = false) String departmentName,
+            @RequestParam(value = "facultyName",required = false) String facultyName
             ){
-        return teacherService.getTeacherList(teacherCode,teacherName,teacherLastName);
+        return teacherService.getTeacherList(teacherCode,teacherName,teacherLastName,departmentName,facultyName);
     }
     @PostMapping("/insertTeacher")
     public ResponseEntity<MessageResponse> insertTeacher(

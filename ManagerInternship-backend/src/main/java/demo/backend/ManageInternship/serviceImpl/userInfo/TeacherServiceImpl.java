@@ -31,10 +31,10 @@ public class TeacherServiceImpl implements TeacherService {
 
     MessageResponse messageResponse = new MessageResponse();
     @Override
-    public ResponseEntity<TeacherResponse> getTeacherList(String teacherCode, String teacherName, String teacherLastName) {
+    public ResponseEntity<TeacherResponse> getTeacherList(String teacherCode, String teacherName, String teacherLastName,String departmentName,String facultyName) {
         try{
             TeacherResponse teacherResponse = new TeacherResponse();
-            teacherResponse.setTeacherList(teacherRepository.getTeacherList(teacherCode,teacherName,teacherLastName));
+            teacherResponse.setTeacherList(teacherRepository.getTeacherList(teacherCode,teacherName,teacherLastName,departmentName,facultyName));
             return new ResponseEntity<>(teacherResponse,HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

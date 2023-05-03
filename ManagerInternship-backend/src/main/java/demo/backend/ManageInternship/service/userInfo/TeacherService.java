@@ -6,7 +6,7 @@ import demo.backend.ManageInternship.model.payload.response.userInfo.TeacherResp
 import org.springframework.http.ResponseEntity;
 
 public interface TeacherService {
-    ResponseEntity<TeacherResponse> getTeacherList(String teacherCode, String teacherName, String teacherLastName);
+    ResponseEntity<TeacherResponse> getTeacherList(String teacherCode, String teacherName, String teacherLastName,String departmentName,String facultyName);
 
     ResponseEntity<MessageResponse> insertTeacher(TeacherRequest teacherRequest);
 
