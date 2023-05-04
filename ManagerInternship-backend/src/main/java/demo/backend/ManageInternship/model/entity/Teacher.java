@@ -6,6 +6,7 @@ package demo.backend.ManageInternship.model.entity;
 
 import demo.backend.ManageInternship.model.bean.StaffList;
 import demo.backend.ManageInternship.model.bean.TeacherData;
+import demo.backend.ManageInternship.model.bean.TeacherReportData;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -50,6 +51,25 @@ import javax.validation.constraints.Size;
                         "AND s.STATUS_CODE = 'AC'"
                 ,
                 resultSetMapping = "TeacherListMapping"
+        ),
+        @NamedNativeQuery(
+                name = "Teacher.findByCodeOrName",
+                query =  "SELECT t.TEACHER_ID, " +
+                        "t.TEACHER_CODE," +
+                        "CONCAT(t.TEACHER_TITLE,t.TEACHER_NAME,' ',t.TEACHER_LASTNAME) AS TEACHER_NAME " +
+                        ",f.FACULTY_NAME  " +
+                        ",d.DEP_NAME " +
+                        ",st.STATUS_NAME AS STATUS_TEACHER " +
+                        "FROM teacher t " +
+                        "INNER JOIN status s on t.STATUS_INFO = s.STATUS_ID " +
+                        "INNER JOIN status st on t.STATUS_TEACHER = st.STATUS_ID " +
+                        "INNER JOIN department d on t.DEP_ID = d.DEP_ID  " +
+                        "INNER JOIN faculty f on d.FACULTY_ID = f.FACULTY_ID " +
+                        "WHERE  (t.TEACHER_CODE = :teacherCode OR :teacherCode IS NULL) " +
+                        "AND (t.TEACHER_NAME LIKE CONCAT('%', :teacherName, '%') OR t.TEACHER_LASTNAME LIKE CONCAT('%',:teacherName, '%')  OR :teacherName IS NULL) " +
+                        "AND s.STATUS_CODE = 'AC'"
+                ,
+                resultSetMapping = "TeacherMapping"
         )
 })
 @SqlResultSetMappings({
@@ -67,6 +87,18 @@ import javax.validation.constraints.Size;
                                 @ColumnResult(name = "CREATE_BY", type = String.class),
                                 @ColumnResult(name = "UPDATE_DATE", type = Date.class),
                                 @ColumnResult(name = "UPDATE_BY", type = String.class),
+                        }
+                )
+        }),
+        @SqlResultSetMapping(name = "TeacherMapping", classes = {
+                @ConstructorResult(targetClass = TeacherReportData.class,
+                        columns = {
+                                @ColumnResult(name = "TEACHER_ID", type = Integer.class),
+                                @ColumnResult(name = "TEACHER_CODE", type = String.class),
+                                @ColumnResult(name = "TEACHER_NAME", type = String.class),
+                                @ColumnResult(name = "FACULTY_NAME", type = String.class),
+                                @ColumnResult(name = "DEP_NAME", type = String.class),
+                                @ColumnResult(name = "STATUS_TEACHER", type = String.class),
                         }
                 )
         })

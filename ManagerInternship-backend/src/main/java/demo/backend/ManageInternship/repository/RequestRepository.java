@@ -1,7 +1,10 @@
 package demo.backend.ManageInternship.repository;
 
+import demo.backend.ManageInternship.model.bean.ReportRequestData;
 import demo.backend.ManageInternship.model.bean.RequestData;
 import demo.backend.ManageInternship.model.entity.Request;
+import demo.backend.ManageInternship.model.payload.response.report.ReportRequestResponse;
+import demo.backend.ManageInternship.model.payload.response.report.ReportYearResponse;
 import demo.backend.ManageInternship.repository.CustomRepository.CustomRequestRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,4 +28,10 @@ public interface RequestRepository extends JpaRepository<Request,Integer>, Custo
 
     @Query("select s.statusCode from Request r inner join Status s on s.statusId = r.statusApprove where r.requestId = :requestId")
     String checkStatusId(@Param(value = "requestId") Integer requestId);
+
+    @Query(nativeQuery = true)
+    ReportRequestData getReportRequest();
+
+    @Query(nativeQuery = true)
+    List<ReportYearResponse> getReportYear(@Param(value = "year") String year);
 }

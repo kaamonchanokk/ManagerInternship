@@ -1,6 +1,7 @@
 package demo.backend.ManageInternship.repository;
 
 import demo.backend.ManageInternship.model.bean.StudentData;
+import demo.backend.ManageInternship.model.bean.StudentReportData;
 import demo.backend.ManageInternship.model.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,7 @@ public interface StudentRepository extends JpaRepository<Student,Integer> {
             ,@Param("studentLastName") String studentLastName
             ,@Param("departmentName") String departmentName
             ,@Param("facultyName") String facultyName);
+
+    @Query(nativeQuery = true)
+    List<StudentReportData> findByTeacherId(@Param("teacherId") Integer teacherId);
 }

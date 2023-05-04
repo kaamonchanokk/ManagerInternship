@@ -1,6 +1,7 @@
 package demo.backend.ManageInternship.repository;
 
 import demo.backend.ManageInternship.model.bean.TeacherData;
+import demo.backend.ManageInternship.model.bean.TeacherReportData;
 import demo.backend.ManageInternship.model.entity.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,7 @@ public interface TeacherRepository extends JpaRepository<Teacher,Integer> {
     Integer countDepartment(@Param("departmentCode") String departmentCode);
     @Query("SELECT t FROM Teacher t  WHERE t.teacherCode= :advisorCode ")
     Teacher findByCode(@Param("advisorCode")  String advisorCode);
+
+    @Query(nativeQuery = true)
+    TeacherReportData findByCodeOrName(@Param("teacherCode") String teacherCode,@Param("teacherName") String teacherName);
 }

@@ -6,6 +6,7 @@ package demo.backend.ManageInternship.model.entity;
 
 import demo.backend.ManageInternship.model.bean.StaffList;
 import demo.backend.ManageInternship.model.bean.StudentData;
+import demo.backend.ManageInternship.model.bean.StudentReportData;
 import lombok.Data;
 import org.springframework.data.repository.query.Param;
 
@@ -26,20 +27,6 @@ import javax.validation.constraints.Size;
 @Table(name = "student")
 @NamedNativeQueries({
         @NamedNativeQuery(
-//                private Integer studentId;
-//                private String studentCode;
-//                private String studentName;
-//                private String studentYear;
-//                private String departmentName;
-//                private String facultyName;
-//                private BigDecimal studentGrade;
-//                private String statusStudent;
-//                private String advisorName;
-//                private String statusInfo;
-//                private Date createdDate;
-//                private String createBy;
-//                private Date updateDate;
-//                private String updateBy;
                 name = "Student.getStudentList",
                 query = "SELECT stu.STUDENT_ID" +
                         ",stu.STUDENT_CODE" +
@@ -72,6 +59,22 @@ import javax.validation.constraints.Size;
                         "AND s.STATUS_CODE = 'AC' "
                 ,
                 resultSetMapping = "StudentListMapping"
+        ),
+        @NamedNativeQuery(
+                name = "Student.findByTeacherId",
+                query = "SELECT stu.STUDENT_ID" +
+                        ",stu.STUDENT_CODE" +
+                        ",CONCAT(stu.STUDENT_TITLE,stu.STUDENT_NAME,' ',stu.STUDENT_LASTNAME) AS STUDENT_NAME " +
+                        ",stu.STUDENT_GRADE" +
+                        ",s2.STATUS_NAME " +
+                        "FROM student stu " +
+                        "INNER JOIN status s on stu.STATUS_INFO = s.STATUS_ID " +
+                        "INNER JOIN status s2 on s2.STATUS_ID = stu.STATUS_STUDENT " +
+                        "INNER JOIN teacher t on t.TEACHER_ID = stu.ADVISOR " +
+                        "WHERE t.TEACHER_ID = :teacherId "+
+                        "AND s.STATUS_CODE = 'AC' "
+                ,
+                resultSetMapping = "StudentListFindByTeacherMapping"
         )
 })
 @SqlResultSetMappings({
@@ -92,6 +95,17 @@ import javax.validation.constraints.Size;
                                 @ColumnResult(name = "CREATE_BY", type = String.class),
                                 @ColumnResult(name = "UPDATE_DATE", type = Date.class),
                                 @ColumnResult(name = "UPDATE_BY", type = String.class),
+                        }
+                )
+        }),
+        @SqlResultSetMapping(name = "StudentListFindByTeacherMapping", classes = {
+                @ConstructorResult(targetClass = StudentReportData.class,
+                        columns = {
+                                @ColumnResult(name = "STUDENT_ID", type = Integer.class),
+                                @ColumnResult(name = "STUDENT_CODE", type = String.class),
+                                @ColumnResult(name = "STUDENT_NAME", type = String.class),
+                                @ColumnResult(name = "STUDENT_GRADE", type = BigDecimal.class),
+                                @ColumnResult(name = "STATUS_NAME", type = String.class),
                         }
                 )
         })

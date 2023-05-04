@@ -5,7 +5,9 @@
 package demo.backend.ManageInternship.model.entity;
 
 import demo.backend.ManageInternship.model.bean.PositionData;
+import demo.backend.ManageInternship.model.bean.ReportRequestData;
 import demo.backend.ManageInternship.model.bean.RequestData;
+import demo.backend.ManageInternship.model.payload.response.report.ReportYearResponse;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -62,6 +64,30 @@ import javax.validation.constraints.NotNull;
                         "AND (sta1.STATUS_CODE =:statusApprove OR :statusApprove IS NULL)  "
                 ,
                 resultSetMapping = "RequestListMapping"
+        ),
+        @NamedNativeQuery(
+                name = "Request.getReportRequest",
+                query = "SELECT " +
+                        "SUM(CASE WHEN STATUS_NAME = 'Approve' THEN TOTAL_REQUEST ELSE 0 END) AS Approve, " +
+                        "SUM(CASE WHEN STATUS_NAME = 'Disapprove' THEN TOTAL_REQUEST ELSE 0 END) AS Disapprove, " +
+                        "SUM(CASE WHEN STATUS_NAME = 'Pending' THEN TOTAL_REQUEST ELSE 0 END) AS Pending " +
+                        "FROM (" +
+                        "SELECT s.STATUS_NAME, COUNT(r.REQUEST_ID) AS TOTAL_REQUEST " +
+                        "FROM status s " +
+                        "LEFT JOIN request r ON r.STATUS_APPROVE = s.STATUS_ID " +
+                        "WHERE s.STATUS_TYPE = 'STATUS_APPROVE'" +
+                        "GROUP BY s.STATUS_ID) AS TableToPivot "
+                ,
+                resultSetMapping = "ReportRequestMapping"
+        ),
+        @NamedNativeQuery(
+                name = "Request.getReportYear",
+                query = "SELECT s.SCHEDULE_YEAR,COUNT(r.REQUEST_ID) AS TOTAL_INTERNSHIP FROM schedule s " +
+                        "LEFT JOIN request r ON r.SCHEDULE_ID = s.SCHEDULE_ID AND r.STATUS_APPROVE = 6 " +
+                        "WHERE s.SCHEDULE_YEAR LIKE CONCAT('%',:year,'%') OR :year IS NULL " +
+                        "GROUP BY s.SCHEDULE_YEAR "
+                ,
+                resultSetMapping = "ReportYearMapping"
         )
 })
 @SqlResultSetMappings({
@@ -84,6 +110,23 @@ import javax.validation.constraints.NotNull;
                                 @ColumnResult(name = "UPDATE_DATE", type = Date.class),
                                 @ColumnResult(name = "UPDATE_BY", type = String.class),
 
+                        }
+                )
+        }),
+        @SqlResultSetMapping(name = "ReportRequestMapping", classes = {
+                @ConstructorResult(targetClass = ReportRequestData.class,
+                        columns = {
+                                @ColumnResult(name = "Approve", type = Integer.class),
+                                @ColumnResult(name = "Disapprove", type = Integer.class),
+                                @ColumnResult(name = "Pending", type = Integer.class),
+                        }
+                )
+        }),
+        @SqlResultSetMapping(name = "ReportYearMapping", classes = {
+                @ConstructorResult(targetClass = ReportYearResponse.class,
+                        columns = {
+                                @ColumnResult(name = "SCHEDULE_YEAR", type = String.class),
+                                @ColumnResult(name = "TOTAL_INTERNSHIP", type = Integer.class)
                         }
                 )
         })

@@ -6,6 +6,7 @@ package demo.backend.ManageInternship.model.entity;
 
 import demo.backend.ManageInternship.model.bean.CompanyData;
 import demo.backend.ManageInternship.model.bean.StaffList;
+import demo.backend.ManageInternship.model.payload.response.report.CompanyReportResponse;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -42,6 +43,15 @@ import javax.validation.constraints.Size;
                         "AND s.STATUS_CODE = 'AC'"
                 ,
                 resultSetMapping = "CompanyListMapping"
+        ),
+        @NamedNativeQuery(
+                name = "Company.getReportCompany",
+                query = "SELECT c.COMPANY_NAME,COUNT(r.REQUEST_ID) AS TOTAL_INTERNSHIP FROM company c " +
+                        "LEFT JOIN request r on c.COMPANY_ID = r.COMPANY_ID AND r.STATUS_APPROVE = 6 " +
+                        "WHERE c.COMPANY_NAME LIKE CONCAT('%',:companyName,'%') OR :companyName IS NULL " +
+                        "GROUP BY c.COMPANY_ID"
+                ,
+                resultSetMapping = "CompanyReportMapping"
         )
 })
 @SqlResultSetMappings({
@@ -57,6 +67,15 @@ import javax.validation.constraints.Size;
                                 @ColumnResult(name = "CREATE_BY", type = String.class),
                                 @ColumnResult(name = "UPDATE_DATE", type = Date.class),
                                 @ColumnResult(name = "UPDATE_BY", type = String.class),
+
+                        }
+                )
+        }),
+        @SqlResultSetMapping(name = "CompanyReportMapping", classes = {
+                @ConstructorResult(targetClass = CompanyReportResponse.class,
+                        columns = {
+                                @ColumnResult(name = "COMPANY_NAME", type = String.class),
+                                @ColumnResult(name = "TOTAL_INTERNSHIP", type = Integer.class)
 
                         }
                 )

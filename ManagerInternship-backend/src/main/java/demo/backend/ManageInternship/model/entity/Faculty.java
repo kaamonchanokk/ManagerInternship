@@ -6,6 +6,7 @@ package demo.backend.ManageInternship.model.entity;
 
 import demo.backend.ManageInternship.model.bean.FacultyData;
 import demo.backend.ManageInternship.model.bean.PositionData;
+import demo.backend.ManageInternship.model.payload.response.report.ReportFacultyResponse;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -40,6 +41,21 @@ import javax.validation.constraints.Size;
                         "AND s.STATUS_CODE = 'AC' "
                 ,
                 resultSetMapping = "FacultyListMapping"
+        ),
+        @NamedNativeQuery(
+                name = "Faculty.getReportFaculty",
+                query = "select t.FACULTY_NAME AS FACULTY_NAME,COUNT(r.REQUEST_ID) AS TOTAL_INTERNSHIP from " +
+                        "request r " +
+                        "INNER JOIN (SELECT s.STUDENT_ID,f.FACULTY_ID,f.FACULTY_NAME " +
+                        "FROM student s " +
+                        "INNER JOIN department d on  d.DEP_ID=s.DEP_ID " +
+                        "INNER JOIN faculty f on f.FACULTY_ID = d.FACULTY_ID " +
+                        "GROUP BY s.STUDENT_ID) AS t ON r.STUDENT_ID = t.STUDENT_ID " +
+                        "WHERE r.STATUS_APPROVE = 6 " +
+                        "AND  t.FACULTY_NAME LIKE CONCAT('%',:facultyName,'%') OR :facultyName IS NULL " +
+                        "GROUP BY t.FACULTY_ID;"
+                ,
+                resultSetMapping = "FacultyReportMapping"
         )
 })
 @SqlResultSetMappings({
@@ -54,6 +70,15 @@ import javax.validation.constraints.Size;
                                 @ColumnResult(name = "CREATE_BY", type = String.class),
                                 @ColumnResult(name = "UPDATE_DATE", type = Date.class),
                                 @ColumnResult(name = "UPDATE_BY", type = String.class),
+
+                        }
+                )
+        }),
+        @SqlResultSetMapping(name = "FacultyReportMapping", classes = {
+                @ConstructorResult(targetClass = ReportFacultyResponse.class,
+                        columns = {
+                                @ColumnResult(name = "FACULTY_NAME", type = String.class),
+                                @ColumnResult(name = "TOTAL_INTERNSHIP", type = Integer.class)
 
                         }
                 )
